@@ -65,7 +65,7 @@ By default the logs are formatted like so: `[LOG_LEVEL] message`, unless you spe
 });
 ```
 
-###Available Constructor Fields
+###Available Constructor Options
 * `domain` (required)
 * `user` (required)
 * `project` (required)
