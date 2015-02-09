@@ -4,6 +4,7 @@ sinon             = require('sinon'),
 expect            = require('chai').expect;
 
 describe("bunyan-fogbugz", function() {
+
 	var user    = "user-name",
 	project     = "project-name",
 	area        = "area-name",
@@ -59,7 +60,7 @@ describe("bunyan-fogbugz", function() {
 
 	});
 
-	describe("custom formatter", function() {
+	describe("formatter", function() {
 
 		it("should use the default formatter", function() {
 			var bunyanFogbugz = new BunyanFogbugz({
@@ -72,21 +73,21 @@ describe("bunyan-fogbugz", function() {
 			});
 
 			var sandbox = sinon.sandbox.create();
-			sandbox.stub(bunyanFogbugz.bugzscout, "submit");
+			var stub = sandbox.stub(bunyanFogbugz.bugzscout, "submit");
 
 			var log = bunyan.createLogger({
 				name: app,
-				stream: bunyanFogbugz,
-				level: level
+				streams: [{
+					stream: bunyanFogbugz,
+					type: "raw",
+					level: level
+				}]
 			});
-
-			var expectedResponse = {
-				description: "[ERROR] hello bunyan fogbugz"
-			};
 
 			log.error("hello bunyan fogbugz");
 
-			sinon.assert.calledWith(bunyanFogbugz.bugzscout.submit, expectedResponse);
+			expect(stub.args[0][0].description).to.contain("hello bunyan fogbugz");
+			expect(stub.args[0][0].extra).to.contain("name", "hostname", "pid", "level", "msg", "time", "v");
 			sandbox.restore();
 		});
 
@@ -110,8 +111,11 @@ describe("bunyan-fogbugz", function() {
 
 			var log = bunyan.createLogger({
 				name: app,
-				stream: bunyanFogbugz,
-				level: level
+				streams: [{
+					stream: bunyanFogbugz,
+					type: "raw",
+					level: level
+				}]
 			});
 
 			var expectedResponse = {
@@ -122,6 +126,34 @@ describe("bunyan-fogbugz", function() {
 
 			sinon.assert.calledWith(bunyanFogbugz.bugzscout.submit, expectedResponse);
 			sandbox.restore();
+		});
+
+		it("should fail without a description", function() {
+			expect(function() {
+			var bunyanFogbugz = new BunyanFogbugz({
+				user: user,
+				project: project,
+				area: area,
+				domain: domain,
+				email: email,
+				forceNewBug: forceNewBug,
+				customFormatter: function(record, levelName) {
+					return {};
+				}
+			});
+
+			var log = bunyan.createLogger({
+				name: app,
+				streams: [{
+					stream: bunyanFogbugz,
+					type: "raw",
+					level: level
+				}]
+			});
+
+			log.error("hello bunyan fogbugz");
+
+			}).to.throw(/You must provide a description/);
 		});
 
 	});
@@ -139,22 +171,22 @@ describe("bunyan-fogbugz", function() {
 				forceNewBug: forceNewBug
 			});
 			var sandbox = sinon.sandbox.create();
-			sandbox.stub(bunyanFogbugz.bugzscout, "submit");
+			var stub = sandbox.stub(bunyanFogbugz.bugzscout, "submit");
 
 
 			var log = bunyan.createLogger({
 				name: app,
-				stream: bunyanFogbugz,
-				level: level
+				streams: [{
+					stream: bunyanFogbugz,
+					type: "raw",
+					level: level
+				}]
 			});
-
-			var expectedResponse = {
-				description: "[ERROR] hello bunyan fogbugz"
-			};
 
 			log.error("hello bunyan fogbugz");
 
-			sinon.assert.calledWith(bunyanFogbugz.bugzscout.submit, expectedResponse);
+			expect(stub.args[0][0].description).to.contain("hello bunyan fogbugz");
+			expect(stub.args[0][0].extra).to.contain("name", "hostname", "pid", "level", "msg", "time", "v");
 			sandbox.restore();
 
 		});
@@ -176,23 +208,21 @@ describe("bunyan-fogbugz", function() {
 			});
 
 			var sandbox = sinon.sandbox.create();
-			sandbox.stub(bunyanFogbugz.bugzscout, "submit");
+			var stub = sandbox.stub(bunyanFogbugz.bugzscout, "submit");
 
 			var log = bunyan.createLogger({
 				name: app,
-				stream: bunyanFogbugz,
-				level: level
+				streams: [{
+					stream: bunyanFogbugz,
+					type: "raw",
+					level: level
+				}]
 			});
-
-			var expectedResponse = {
-				description: "hello bunyan fogbugz"
-			};
 
 			log.error({
 				err: "hello bunyan fogbugz"
 			});
-
-			sinon.assert.calledWith(bunyanFogbugz.bugzscout.submit, expectedResponse);
+			expect(stub.args[0][0].description).to.contain("hello bunyan fogbugz");
 			sandbox.restore();
 		});
 
@@ -213,24 +243,23 @@ describe("bunyan-fogbugz", function() {
 			});
 
 			var sandbox = sinon.sandbox.create();
-			sandbox.stub(bunyanFogbugz.bugzscout, "submit");
+			var stub = sandbox.stub(bunyanFogbugz.bugzscout, "submit");
 
 			var log = bunyan.createLogger({
 				name: app,
-				stream: bunyanFogbugz,
-				level: level
+				streams: [{
+					stream: bunyanFogbugz,
+					type: "raw",
+					level: level
+				}]
 			});
-
-			var expectedResponse = {
-				description: "hello bunyan fogbugz",
-				extra: "500 error"
-			};
 
 			log.error({
 				err: "hello bunyan fogbugz"
 			}, "500 error");
 
-			sinon.assert.calledWith(bunyanFogbugz.bugzscout.submit, expectedResponse);
+			expect(stub.args[0][0].description).to.contain("hello bunyan fogbugz");
+			expect(stub.args[0][0].extra).to.contain("500 error");
 			sandbox.restore();
 		});
 
