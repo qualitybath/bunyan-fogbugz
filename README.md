@@ -84,6 +84,7 @@ log = bunyan.createLogger({
 		level: 'error'
 	}]
 });
+log.error({err: "error"}, "message");
 ```
 ####Available Custom Formatter Options
 * `description` (required)
