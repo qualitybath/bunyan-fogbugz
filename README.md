@@ -41,7 +41,7 @@ log = bunyan.createLogger({
 	level: "error"
 });
 
-log.error("hello bunyan slack");
+log.error("hello bunyan fogbugz");
 ```
 ##Custom Formatters
 
