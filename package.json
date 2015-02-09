@@ -1,6 +1,6 @@
 {
   "name": "bunyan-fogbugz",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Bunyan stream for sending automated crash reports to FogBugz",
   "main": "./lib/bunyan_fogbugz",
   "directories": {
