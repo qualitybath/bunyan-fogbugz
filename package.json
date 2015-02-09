@@ -30,7 +30,7 @@
   },
   "homepage": "https://github.com/qualitybath/bunyan-fogbugz",
   "dependencies": {
-    "bugzscout": "0.0.4",
+    "bugzscout": "0.0.5",
     "bunyan": "^1.3.3"
   },
   "devDependencies": {
