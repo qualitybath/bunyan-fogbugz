@@ -47,6 +47,7 @@ log = bunyan.createLogger({
 log.error("hello bunyan fogbugz");
 ```
 > **Notice: ** bunyan-fogbugz requires a raw stream type as above `type: 'raw'`
+
 ####Available Constructor Options:
 * `domain` (required)
 * `user` (required)
