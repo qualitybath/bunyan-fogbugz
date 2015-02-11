@@ -91,6 +91,37 @@ describe("bunyan-fogbugz", function() {
 			sandbox.restore();
 		});
 
+		it("should not throw circular reference error", function() {
+
+			var bunyanFogbugz = new BunyanFogbugz({
+				user: user,
+				project: project,
+				area: area,
+				domain: domain,
+				email: email,
+				forceNewBug: forceNewBug
+			});
+
+			var log = bunyan.createLogger({
+				name: app,
+				streams: [{
+					stream: bunyanFogbugz,
+					type: "raw",
+					level: level
+				}]
+			});
+
+			expect(function(){
+				function Foo() {
+					this.abc = "Hello";
+					this.circular = this;
+				}
+				var foo = new Foo();
+
+				log.error({err: foo});
+			}).to.not.throw();
+		});
+
 		it("should use the custom formatter", function() {
 			var bunyanFogbugz = new BunyanFogbugz({
 				user: user,
