@@ -76,7 +76,7 @@ log = bunyan.createLogger({
 			customFormatter: function(record, levelName){
 				return {
 					description: util.format("%s %s", record.msg, record.err ? record.err : ""),
-					extra: JSON.stringify(record, null, 2)
+					extra: JSON.stringify(record, bunyan.safeCycles(), 2)
 				};
 			}
 		}),
